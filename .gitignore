@@ -1,0 +1,5 @@
+*.o
+*.exe
+dist/
+Output/
+old_files_for_rollback/
