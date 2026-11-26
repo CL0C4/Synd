@@ -801,7 +801,7 @@ int run_frontend()
 
   // log
   ctx->log_buffer = new Fl_Text_Buffer();
-  ctx->log = create_modern_text_log(50, 405, 620, 40, "Log", ctx->log_buffer); // changed from 50 240 620 80
+  ctx->log = create_modern_text_log(50, 415, 620, 40, "Log", ctx->log_buffer); // changed from 50 240 620 80
 
   // added 11/25/26
   // boxes for file explore
