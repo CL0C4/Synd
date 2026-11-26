@@ -114,4 +114,6 @@ Synd uses [libssh](https://www.libssh.org/), [FLTK](https://www.fltk.org/), [Ope
 
 ## License
 
-[Add your license here, for example MIT, and include a `LICENSE` file in the repository.]
+Synd is released under the [MIT License](LICENSE).<img width="719" height="500" alt="screenshot" src="https://github.com/user-attachments/assets/99b67061-e709-4878-98a3-c68ab08c515c" />
+<img width="719" height="500" alt="screenshot" src="https://github.com/user-attachments/assets/f5f1f97c-74c5-455a-9c3e-214f736b1115" />
+
