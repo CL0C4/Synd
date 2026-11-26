@@ -1,5 +1,0 @@
-upload:
-./test.exe user@serverurl.tld local_file_path remote_directory
-
-retrieve:
-./test.exe user@serverurl.tld local_directory remote_file_path

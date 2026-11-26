@@ -1,10 +1,12 @@
 #include "gui.h"
 #include "../auth/auth.h"
 #include "../retrieve/retrieve.h"
-#include "../upload/upload.h"
+// #include "../upload/upload.h"
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Progress.H>
 #include <FL/Fl_Radio_Button.H>
+#include <chrono>
+#include <FL/Fl_Box.H>
 
 Fl_Color dark_bg = fl_rgb_color(30, 30, 36);       // Dark window canvas
 Fl_Color surface_bg = fl_rgb_color(43, 43, 51);    // Input field background
@@ -13,7 +15,8 @@ Fl_Color text_muted = fl_rgb_color(160, 160, 170); // Secondary gray text
 Fl_Color btn_color = fl_rgb_color(28, 97, 74);     // green
 
 Fl_Button *create_modern_button(int x, int y, int w, int h,
-                                const char *label_text) {
+                                const char *label_text)
+{
   Fl_Button *connect_btn =
       new Fl_Button(x, y, w, h, label_text); // x-pos, y-pos, w, h, text
   connect_btn->box(FL_FLAT_BOX);             // flat color
@@ -28,7 +31,8 @@ Fl_Button *create_modern_button(int x, int y, int w, int h,
 }
 
 Fl_Input *create_modern_input(int x, int y, int w, int h,
-                              const char *label_text) {
+                              const char *label_text)
+{
   int label_height = 14;
   int vertical_gap = 8; // <-- spacing between label and box
 
@@ -54,7 +58,8 @@ Fl_Input *create_modern_input(int x, int y, int w, int h,
 }
 
 Fl_Secret_Input *create_modern_secret_input(int x, int y, int w, int h,
-                                            const char *label_text) {
+                                            const char *label_text)
+{
   int label_height = 14;
   int vertical_gap = 8; // <-- spacing between label and box
 
@@ -81,7 +86,8 @@ Fl_Secret_Input *create_modern_secret_input(int x, int y, int w, int h,
 
 Fl_Text_Display *create_modern_text_log(int x, int y, int w, int h,
                                         const char *label_text,
-                                        Fl_Text_Buffer *buffer) {
+                                        Fl_Text_Buffer *buffer)
+{
   int label_height = 14;
   int vertical_gap = 8; // Spacing between label and box
 
@@ -114,7 +120,8 @@ Fl_Text_Display *create_modern_text_log(int x, int y, int w, int h,
   return field;
 }
 
-Fl_Progress *create_modern_progress_bar(int x, int y, int w, int h) {
+Fl_Progress *create_modern_progress_bar(int x, int y, int w, int h)
+{
   // init
   Fl_Progress *bar = new Fl_Progress(x, y, w, h);
 
@@ -138,7 +145,8 @@ Fl_Progress *create_modern_progress_bar(int x, int y, int w, int h) {
 }
 
 Fl_Radio_Button *create_modern_radio_button(int x, int y, int w, int h,
-                                            const char *label_text) {
+                                            const char *label_text)
+{
   Fl_Radio_Button *radio_button =
       new Fl_Radio_Button(x, y, w, h, label_text); // x-pos, y-pos, w, h, text
   radio_button->box(FL_FLAT_BOX);                  // flat color
@@ -153,7 +161,8 @@ Fl_Radio_Button *create_modern_radio_button(int x, int y, int w, int h,
 }
 
 Fl_Choice *create_modern_dropdown(int x, int y, int w, int h,
-                                  const char *label_text) {
+                                  const char *label_text)
+{
   int label_height = 14;
   int vertical_gap = 8; // <-- spacing between label and box
   // label
@@ -181,7 +190,34 @@ Fl_Choice *create_modern_dropdown(int x, int y, int w, int h,
   return field;
 }
 
-void append_to_log(AppContext *ctx, const std::string &message) {
+// local and remote file boxes
+Fl_Box *create_modern_box(int x, int y, int w, int h,
+                          const char *label_text)
+{
+  int label_height = 14;
+  int vertical_gap = 8; // <-- spacing between label and box
+
+  Fl_Box *custom_label =
+      new Fl_Box(x, y - label_height - vertical_gap, w, label_height);
+  custom_label->copy_label(label_text);
+  custom_label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  custom_label->labelcolor(fl_rgb_color(160, 160, 170)); // text_muted
+  custom_label->labelfont(FL_HELVETICA);
+  custom_label->labelsize(12);
+  Fl_Box *new_box =
+      new Fl_Box(x, y, w, h); // x-pos, y-pos, w, h, text
+  new_box->box(FL_FLAT_BOX);  // flat color
+  new_box->color(fl_rgb_color(43, 43, 51));
+  new_box->labelcolor(fl_rgb_color(204, 204, 209));
+  new_box->labelfont(FL_HELVETICA);
+  new_box->labelsize(12);
+  new_box->clear_visible_focus();
+
+  return new_box;
+}
+
+void append_to_log(AppContext *ctx, const std::string &message)
+{
   if (!ctx || !ctx->log_buffer || !ctx->log)
     return;
 
@@ -193,12 +229,14 @@ void append_to_log(AppContext *ctx, const std::string &message) {
   ctx->log->show_insert_position();
 }
 
-struct ProgressUpdate {
+struct ProgressUpdate
+{
   Fl_Progress *bar;
   float value;
 };
 
-void update_ui_safely(void *data) {
+void update_ui_safely(void *data)
+{
   ProgressUpdate *update = (ProgressUpdate *)data;
 
   // update
@@ -209,14 +247,16 @@ void update_ui_safely(void *data) {
   delete update;
 }
 
-void send_status_to_ui(Fl_Progress *bar, float val) {
+void send_status_to_ui(Fl_Progress *bar, float val)
+{
   ProgressUpdate *update = new ProgressUpdate{bar, val};
 
   // tells tltk to run on main thread
   Fl::awake(update_ui_safely, update);
 }
 
-void toggle_send_retrieve_callback(Fl_Widget *w, void *data) {
+void toggle_send_retrieve_callback(Fl_Widget *w, void *data)
+{
   Fl_Radio_Button *btn = (Fl_Radio_Button *)w;
 
   if (!data)
@@ -228,21 +268,25 @@ void toggle_send_retrieve_callback(Fl_Widget *w, void *data) {
     return; // check that log widget is allocated
 
   // value() returns 1 if this specific button was just turned on
-  if (btn->value() == 1) {
+  if (btn->value() == 1)
+  {
     std::string msg = "Set to " + std::string(btn->label()) + " file/directory";
     append_to_log(ctx, msg);
   }
 }
 
 // thread
-struct ThreadMessage {
+struct ThreadMessage
+{
   AppContext *ctx;
   std::string text;
 };
 
-void ui_log_callback(void *data) {
+void ui_log_callback(void *data)
+{
   ThreadMessage *msg = (ThreadMessage *)data;
-  if (msg && msg->ctx && msg->ctx->log_buffer && msg->ctx->log) {
+  if (msg && msg->ctx && msg->ctx->log_buffer && msg->ctx->log)
+  {
     // Safe to modify widgets here!
     msg->ctx->log_buffer->append((msg->text + "\n").c_str());
     msg->ctx->log->insert_position(msg->ctx->log_buffer->length());
@@ -251,33 +295,39 @@ void ui_log_callback(void *data) {
   delete msg; // Clean up the message memory
 }
 
-void safe_thread_log(AppContext *ctx, const std::string &text) {
+void safe_thread_log(AppContext *ctx, const std::string &text)
+{
   ThreadMessage *msg = new ThreadMessage{ctx, text};
   // Fl::awake queues the ui_log_callback to be executed by the main UI thread
   // safely
   Fl::awake(ui_log_callback, msg);
 }
 
-void worker_done_callback(void *data) {
+void worker_done_callback(void *data)
+{
   ((Fl_Widget *)data)->activate();
 }
 
-void finish_worker_ui(Fl_Widget *btn) {
+void finish_worker_ui(Fl_Widget *btn)
+{
   Fl::awake(worker_done_callback, btn);
 }
 
 void ssh_worker_thread(AppContext *ctx, std::string addr, std::string local,
                        std::string remote, std::string password,
-                       Fl_Progress *bar, int action, int conn_type, Fl_Widget *btn) {
+                       Fl_Progress *bar, int action, int conn_type, Fl_Widget *btn)
+{
   safe_thread_log(ctx, "Starting authentication process background worker...");
   send_status_to_ui(bar, 5.0f);
 
   ssh_session sess = authenticate_connection(addr, conn_type, password, ctx);
+  ctx->sess = sess;
 
   std::fill(password.begin(), password.end(), '\0');
   password.clear();
 
-  if (!sess) {
+  if (!sess)
+  {
     safe_thread_log(ctx, "Connection failed; transfer cancelled");
     stop_tunnel();
     send_status_to_ui(bar, 0.0f);
@@ -286,47 +336,68 @@ void ssh_worker_thread(AppContext *ctx, std::string addr, std::string local,
   }
 
   safe_thread_log(ctx, "Authentication complete! Connection verified.");
-  if (action == 1) {
-    upload_file(sess, local, remote, ctx);
-  } else if (action == 0) {
-    retrieve_file(sess, remote, local, ctx);
+  safe_thread_log(ctx, "Populating Trees");
+
+  // In ssh_worker_thread (gui.cpp):
+  sftp_session serv = open_sftp_session(sess, ctx);
+  if (!serv)
+  {
+    finish_worker_ui(btn);
+    return;
   }
 
-  exit_on_error(sess);
-  stop_tunnel();
+  // Resolve remote "./" safely
+  char *real_remote = sftp_canonicalize_path(serv, remote.c_str());
+  if (real_remote)
+  {
+    ctx->remote = real_remote;
+    ssh_string_free_char(real_remote);
+  }
+
+  // Lock FLTK before modifying Fl_Tree widgets from a worker thread!
+  Fl::lock();
+  populate_local_fl_tree(ctx->local, "Local", ctx->local_tree, ctx);
+  populate_remote_fl_tree(sess, serv, ctx->remote, "Remote", ctx->remote_tree, ctx);
+  Fl::unlock();
+
+  // Redraw safely on the main UI thread
+  Fl::awake([](void *data)
+            {
+    AppContext *c = static_cast<AppContext *>(data);
+    if (c->local_tree) c->local_tree->redraw();
+    if (c->remote_tree) c->remote_tree->redraw(); }, ctx);
+
+  sftp_free(serv);
   finish_worker_ui(btn);
 }
 
-void connect_btn_callback(Fl_Widget *w, void *data) {
+void connect_btn_callback(Fl_Widget *w, void *data)
+{
   AppContext *ctx = (AppContext *)data;
   Fl_Progress *bar = ctx->prog_bar;
-  Fl_Radio_Button *btn = ctx->send;
+  Fl_Button *btn = ctx->send;
   bool has_error = false;
 
   // check if there are empty fields
-  if (ctx->addr->value()[0] == '\0') {
+  if (ctx->addr->value()[0] == '\0')
+  {
     append_to_log(ctx, "Error: Empty address");
     has_error = true;
   }
-  if (ctx->local->value()[0] == '\0') {
-    append_to_log(ctx, "Error: Empty local path");
-    has_error = true;
-  }
-  if (ctx->remote->value()[0] == '\0') {
-    append_to_log(ctx, "Error: Empty remote path");
-    has_error = true;
-  }
-  if (ctx->pass->value()[0] == '\0') {
+  if (ctx->pass->value()[0] == '\0')
+  {
     append_to_log(ctx, "Error: Empty password");
     has_error = true;
   }
 
   // all fields contain something
-  if (!has_error) {
+  if (!has_error)
+  {
     append_to_log(ctx, "All fields filled, proceeding.");
   }
-  if(has_error){
-      return;
+  if (has_error)
+  {
+    return;
   }
 
   w->deactivate();
@@ -335,8 +406,8 @@ void connect_btn_callback(Fl_Widget *w, void *data) {
 
   // grab addr, local, remote, pass
   std::string address = ctx->addr->value();
-  std::string local = ctx->local->value();
-  std::string remote = ctx->remote->value();
+  std::string local = ctx->local;
+  std::string remote = ctx->remote;
   // password
   const char *raw_pass = ctx->pass->value();
   // upload/download
@@ -348,14 +419,16 @@ void connect_btn_callback(Fl_Widget *w, void *data) {
   worker.detach(); // allows it to run independently of the main GUI loop
 }
 
-void OverwriteCallback(void *data) {
+void OverwriteCallback(void *data)
+{
   NewHostAlertContext *ctx = static_cast<NewHostAlertContext *>(data);
   fl_message_title("File Conflict");
   ctx->result = fl_ask("File already exists. Overwrite?");
   ctx->done = true; // Signal the background thread that the user answered
 }
 
-void NewHostCallback(void *data) {
+void NewHostCallback(void *data)
+{
   NewHostAlertContext *ctx = static_cast<NewHostAlertContext *>(data);
   fl_message_title("Unknown Host");
   ctx->result =
@@ -363,26 +436,296 @@ void NewHostCallback(void *data) {
   ctx->done = true; // Signal the background thread that the user answered
 }
 
-int showAlertOnNewHost(char *hexa_string) {
+int showAlertOnNewHost(char *hexa_string)
+{
   NewHostAlertContext ctx;
   ctx.hexa_string = hexa_string;
   Fl::awake(NewHostCallback, &ctx);
-  while (!ctx.done) {
-    usleep(1000);
+  while (!ctx.done)
+  {
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
   return ctx.result;
 }
 
-int showOverwriteAlert() {
+int showOverwriteAlert()
+{
   OverwriteAlertContext ctx;
   Fl::awake(OverwriteCallback, &ctx);
-  while (!ctx.done) {
-    usleep(1000);
+  while (!ctx.done)
+  {
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
   return ctx.result;
 }
 
-int run_frontend() {
+// upload/download callbacks
+
+#include <chrono>
+
+// Helper: returns true if the same Fl_Tree_Item was clicked twice within 400ms
+bool is_tree_double_click(Fl_Tree_Item *item, bool is_local)
+{
+  using clock = std::chrono::steady_clock;
+  static Fl_Tree_Item *last_local_item = nullptr;
+  static clock::time_point last_local_time;
+  static Fl_Tree_Item *last_remote_item = nullptr;
+  static clock::time_point last_remote_time;
+
+  Fl_Tree_Item *&last_item = is_local ? last_local_item : last_remote_item;
+  clock::time_point &last_time = is_local ? last_local_time : last_remote_time;
+
+  auto now = clock::now();
+  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_time).count();
+
+  bool double_clicked = (item == last_item && elapsed > 0 && elapsed < 400);
+
+  last_item = item;
+  last_time = now;
+
+  // Reset after a successful double-click so a 3rd click doesn't trigger again
+  if (double_clicked)
+  {
+    last_item = nullptr;
+  }
+
+  return double_clicked;
+}
+
+fs::path get_fs_path_from_item(Fl_Tree *tree, Fl_Tree_Item *item, const fs::path &base_dir, const std::string &tree_prefix)
+{
+  if (!tree || !item)
+    return {};
+
+  char pathname[1024];
+  if (tree->item_pathname(pathname, sizeof(pathname), item) != 0)
+  {
+    return {};
+  }
+
+  std::string rel_path(pathname);
+
+  // 1. Strip FLTK's default "ROOT/" prefix if present
+  if (rel_path.rfind("ROOT/", 0) == 0)
+  {
+    rel_path.erase(0, 5);
+  }
+  else if (rel_path == "ROOT")
+  {
+    return base_dir;
+  }
+
+  // 2. Strip your custom "Local/" or "Remote/" prefix
+  std::string prefix_with_slash = tree_prefix + "/";
+  if (rel_path.rfind(prefix_with_slash, 0) == 0)
+  {
+    rel_path.erase(0, prefix_with_slash.length());
+  }
+  else if (rel_path == tree_prefix)
+  {
+    return base_dir;
+  }
+
+  return base_dir / fs::path(rel_path);
+}
+
+void upload(Fl_Widget *w, void *data)
+{
+  AppContext *ctx = (AppContext *)data;
+  if (!ctx || !ctx->sess)
+  {
+    safe_thread_log(ctx, "Not connected to SSH session.");
+    return;
+  }
+
+  Fl_Tree_Item *local = ctx->local_tree->first_selected_item();
+  Fl_Tree_Item *remote = ctx->remote_tree->first_selected_item();
+  if (!local)
+  {
+    safe_thread_log(ctx, "No local file selected.");
+    return;
+  }
+  if (!remote)
+  {
+    safe_thread_log(ctx, "No remote destination selected.");
+    return;
+  }
+
+  fs::path local_target = get_fs_path_from_item(ctx->local_tree, local, ctx->local, "Local");
+  fs::path remote_target = get_fs_path_from_item(ctx->remote_tree, remote, ctx->remote, "Remote");
+
+  // Run upload_file in a worker thread so showOverwriteAlert() and progress bar updates don't block/deadlock the UI
+  std::thread([ctx, local_target, remote_target]()
+              { upload_file(ctx->sess, local_target, remote_target, ctx); })
+      .detach();
+  ctx->send->value(0);
+}
+
+void retrieve(Fl_Widget *w, void *data)
+{
+  AppContext *ctx = (AppContext *)data;
+  if (!ctx || !ctx->sess)
+  {
+    safe_thread_log(ctx, "Not connected to SSH session.");
+    return;
+  }
+
+  Fl_Tree_Item *local = ctx->local_tree->first_selected_item();
+  Fl_Tree_Item *remote = ctx->remote_tree->first_selected_item();
+  if (!local)
+  {
+    safe_thread_log(ctx, "No local file selected.");
+    ctx->send->value(0);
+    ctx->retrieve->value(0);
+    return;
+  }
+  if (!remote)
+  {
+    safe_thread_log(ctx, "No remote destination selected.");
+    ctx->send->value(0);
+    ctx->retrieve->value(0);
+    return;
+  }
+
+  fs::path local_target = get_fs_path_from_item(ctx->local_tree, local, ctx->local, "Local");
+  fs::path remote_target = get_fs_path_from_item(ctx->remote_tree, remote, ctx->remote, "Remote");
+
+  // Run retrieve_file in a worker thread so showOverwriteAlert() and progress bar updates don't block/deadlock the UI
+  std::thread([ctx, local_target, remote_target]()
+              { retrieve_file(ctx->sess, remote_target, local_target, ctx); })
+      .detach();
+  ctx->retrieve->value(0);
+}
+
+void local_tree_callback(Fl_Widget *w, void *data)
+{
+  Fl_Tree *tree = (Fl_Tree *)w;
+  AppContext *ctx = (AppContext *)data;
+  Fl_Tree_Item *item = tree->callback_item();
+
+  Fl_Tree_Reason reason = tree->callback_reason();
+  if (!item || (reason != FL_TREE_REASON_SELECTED && reason != FL_TREE_REASON_RESELECTED))
+    return;
+
+  // Single click highlights item for Upload/Download; 2 clicks within 400ms navigates
+  if (!is_tree_double_click(item, true))
+    return;
+
+  std::string label = item->label() ? item->label() : "";
+  std::error_code ec;
+  fs::path current(ctx->local);
+
+  if (label == "..")
+  {
+    if (current.has_parent_path() && current.parent_path() != current)
+    {
+      ctx->local = current.parent_path().string();
+      populate_local_fl_tree(ctx->local, "Local", ctx->local_tree, ctx);
+      ctx->local_tree->redraw();
+    }
+    return;
+  }
+
+  if (!label.empty() && label.back() == '/')
+  {
+    std::string folder_name = label.substr(0, label.size() - 1);
+    fs::path next_dir = current / folder_name;
+    if (fs::is_directory(next_dir, ec))
+    {
+      ctx->local = next_dir.string();
+      populate_local_fl_tree(ctx->local, "Local", ctx->local_tree, ctx);
+      ctx->local_tree->redraw();
+    }
+  }
+}
+
+// Helper to safely redraw remote_tree from a background thread
+void redraw_remote_tree_cb(void *data)
+{
+  Fl_Tree *tree = static_cast<Fl_Tree *>(data);
+  if (tree)
+    tree->redraw();
+}
+
+void remote_tree_callback(Fl_Widget *w, void *data)
+{
+  Fl_Tree *tree = (Fl_Tree *)w;
+  AppContext *ctx = (AppContext *)data;
+  Fl_Tree_Item *item = tree->callback_item();
+
+  Fl_Tree_Reason reason = tree->callback_reason();
+  if (!item || (reason != FL_TREE_REASON_SELECTED && reason != FL_TREE_REASON_RESELECTED))
+    return;
+
+  if (!is_tree_double_click(item, false))
+    return;
+
+  if (!ctx || !ctx->sess)
+  {
+    safe_thread_log(ctx, "Not connected to SSH session.");
+    return;
+  }
+
+  std::string label = item->label() ? item->label() : "";
+  std::string current_remote = ctx->remote;
+  std::string next_remote;
+
+  // 1. Move up to parent directory on ".."
+  if (label == "..")
+  {
+    if (current_remote == "/" || current_remote.empty())
+      return;
+
+    // Strip trailing slash if present
+    while (current_remote.size() > 1 && current_remote.back() == '/')
+      current_remote.pop_back();
+
+    size_t last_slash = current_remote.find_last_of('/');
+    if (last_slash == std::string::npos || last_slash == 0)
+      next_remote = "/";
+    else
+      next_remote = current_remote.substr(0, last_slash);
+  }
+  // 2. Enter subdirectory if item ends with '/'
+  else if (!label.empty() && label.back() == '/')
+  {
+    std::string folder_name = label.substr(0, label.size() - 1);
+    next_remote = (current_remote == "/") ? ("/" + folder_name) : (current_remote + "/" + folder_name);
+  }
+  else
+  {
+    // Regular file double-clicked — ignore navigation
+    return;
+  }
+
+  // Fetch the new remote directory in a worker thread so UI stays responsive
+  std::thread([ctx, next_remote]()
+              {
+        sftp_session serv = open_sftp_session(ctx->sess, ctx);
+        if (!serv) return;
+
+        // Verify the directory opens before updating ctx->remote
+        sftp_dir test_dir = sftp_opendir(serv, next_remote.c_str());
+        if (!test_dir)
+        {
+            safe_thread_log(ctx, "Cannot open remote folder: " + next_remote);
+            sftp_free(serv);
+            return;
+        }
+        sftp_closedir(test_dir);
+
+        Fl::lock();
+        ctx->remote = next_remote;
+        populate_remote_fl_tree(ctx->sess, serv, ctx->remote, "Remote", ctx->remote_tree, ctx);
+        Fl::unlock();
+
+        Fl::awake(redraw_remote_tree_cb, ctx->remote_tree);
+        sftp_free(serv); })
+      .detach();
+}
+
+int run_frontend()
+{
   // ----------- theme
   Fl::scheme("gtk+");
   // Set fallback window background color overrides globally
@@ -396,8 +739,9 @@ int run_frontend() {
 
   Fl_PNG_Image *icon = new Fl_PNG_Image(icon_path.c_str());
   Fl_RGB_Image *scaled_icon = nullptr;
-  if (!icon->fail()) {
-      scaled_icon = (Fl_RGB_Image *)icon->copy(32, 32);
+  if (!icon->fail())
+  {
+    scaled_icon = (Fl_RGB_Image *)icon->copy(32, 32);
   }
   win->icon(scaled_icon);
   win->color(dark_bg);
@@ -429,39 +773,78 @@ int run_frontend() {
   // app context for log
   AppContext *ctx = new AppContext();
 
+  const char *user_profile = std::getenv("USERPROFILE");
+  if (user_profile)
+  {
+    fs::path desktop = fs::path(user_profile) / "Desktop";
+    if (fs::exists(desktop))
+    {
+      ctx->local = desktop.string();
+    }
+    else
+    {
+      ctx->local = user_profile;
+    }
+  }
+  else
+  {
+    ctx->local = "C:\\";
+  }
+
   // main buttons/fields
-  Fl_Button *connect_btn = create_modern_button(580, 150, 90, 30, "Connect");
+  Fl_Button *connect_btn = create_modern_button(490, 100, 90, 30, "Connect");
   ctx->addr = create_modern_input(50, 100, 120, 30, "Address");
-  ctx->local = create_modern_input(190, 100, 120, 30, "Local Path");
-  ctx->remote = create_modern_input(330, 100, 120, 30, "Remote Path");
-  ctx->pass = create_modern_secret_input(470, 100, 90, 30, "Password");
-  ctx->prog_bar = create_modern_progress_bar(50, 190, 620, 15);
+  ctx->pass = create_modern_secret_input(190, 100, 120, 30, "Password");
+  ctx->prog_bar = create_modern_progress_bar(50, 340, 620, 15);
   // connection type
-  ctx->conn_type = create_modern_dropdown(580, 100, 90, 30, "Connection Type");
+  ctx->conn_type = create_modern_dropdown(330, 100, 120, 30, "Connection Type");
 
   // log
   ctx->log_buffer = new Fl_Text_Buffer();
-  ctx->log = create_modern_text_log(50, 240, 620, 80, "Log", ctx->log_buffer);
+  ctx->log = create_modern_text_log(50, 405, 620, 40, "Log", ctx->log_buffer); // changed from 50 240 620 80
 
-  // "toggle" switch for send/receive
-  Fl_Group *radio_group = new Fl_Group(50, 150, 180, 30);
-  // send
-  ctx->send = create_modern_radio_button(50, 150, 90, 30, "Upload");
-  ctx->send->value(1);
-  ctx->send->callback(toggle_send_retrieve_callback, ctx);
+  // added 11/25/26
+  // boxes for file explore
+  ctx->local_files = create_modern_box(50, 160, 285, 150, "Local Files");
+  ctx->local_tree = new Fl_Tree(55, 165, 250, 145);
+  ctx->local_tree->color(fl_rgb_color(43, 43, 51));           // surface_bg
+  ctx->local_tree->selection_color(fl_rgb_color(28, 97, 74)); // visible green highlight
+  ctx->local_tree->item_labelfgcolor(fl_rgb_color(240, 240, 245));
+  ctx->local_tree->connectorcolor(fl_rgb_color(204, 204, 209));
+  ctx->local_tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS); // enables double-click callback
+  ctx->local_tree->callback(local_tree_callback, ctx);
+  ctx->local_tree->showroot(0);
 
-  // retrieve
-  ctx->retrieve = create_modern_radio_button(142, 150, 90, 30, "Download");
-  ctx->retrieve->callback(toggle_send_retrieve_callback, ctx);
-  radio_group->end();
+  ctx->remote_files = create_modern_box(415, 160, 285, 150, "Remote Files");
+  ctx->remote_tree = new Fl_Tree(420, 165, 250, 145);
+  ctx->remote_tree->color(fl_rgb_color(43, 43, 51));
+  ctx->remote_tree->selection_color(fl_rgb_color(28, 97, 74)); // visible green highlight
+  ctx->remote_tree->item_labelfgcolor(fl_rgb_color(240, 240, 245));
+  ctx->remote_tree->connectorcolor(fl_rgb_color(204, 204, 209));
+  ctx->remote_tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS); // enables double-click callback
+  ctx->remote_tree->callback(remote_tree_callback, ctx);
+  ctx->remote_tree->showroot(0);
+
+  // Upload/retrieve buttons
+  ctx->send = create_modern_button(50, 375, 90, 30, "Upload");
+  ctx->send->callback(upload, ctx);
+  ctx->retrieve = create_modern_button(142, 375, 90, 30, "Download");
+  ctx->retrieve->callback(retrieve, ctx);
 
   // connect button callback
   connect_btn->callback(connect_btn_callback, ctx);
 
   win->end();
   Fl::lock();
+  populate_local_fl_tree(ctx->local, "Local", ctx->local_tree, ctx);
   win->show();
   int r = Fl::run();
+  if (ctx->sess)
+  {
+    ssh_disconnect(ctx->sess);
+    ssh_free(ctx->sess);
+    ctx->sess = nullptr;
+  }
   stop_tunnel();
   return r;
 }

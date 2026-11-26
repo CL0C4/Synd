@@ -20,7 +20,9 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Tree.H>
 #include <atomic>
+#include <libssh/libssh.h>
 
 
 
@@ -29,15 +31,20 @@
 
 struct AppContext {
   Fl_Input *addr;
-  Fl_Input *local;
-  Fl_Input *remote;
+  std::string local = "./";
+  std::string remote = "./";
   Fl_Secret_Input *pass;
   Fl_Text_Display *log;
   Fl_Text_Buffer *log_buffer;
   Fl_Progress *prog_bar;
   Fl_Choice *conn_type;
-  Fl_Radio_Button* send;
-  Fl_Radio_Button* retrieve;
+  Fl_Button* send;
+  Fl_Button* retrieve;
+  Fl_Box* local_files;
+  Fl_Box* remote_files;
+  Fl_Tree* local_tree;
+  Fl_Tree* remote_tree;
+  ssh_session sess;
 };
 
 struct OverwriteAlertContext {
@@ -63,6 +70,8 @@ Fl_Progress* create_modern_progress_bar(int x, int y, int w, int h);
 Fl_Radio_Button* create_modern_radio_button(int x, int y, int w, int h, const char* label_text);
 
 Fl_Choice* create_modern_dropdown(int x, int y, int w, int h, const char* label_text);
+
+Fl_Box* create_modern_box(int x, int y, int w, int h, const char* label_text);
 
 void update_ui_safely(void* data);
 
