@@ -3,6 +3,7 @@
 
 Synd is a small Windows desktop app for sending and retrieving files over SFTP. It has a simple graphical interface with your computer's files on one side and the server's files on the other, and an optional **Cloudflare Tunnel** connection mode for servers that sit behind Cloudflare Access.
 
+<img width="719" height="500" alt="screenshot" src="https://github.com/user-attachments/assets/99b67061-e709-4878-98a3-c68ab08c515c" />
 
 ## Features
 
@@ -114,6 +115,4 @@ Synd uses [libssh](https://www.libssh.org/), [FLTK](https://www.fltk.org/), [Ope
 
 ## License
 
-Synd is released under the [MIT License](LICENSE).<img width="719" height="500" alt="screenshot" src="https://github.com/user-attachments/assets/99b67061-e709-4878-98a3-c68ab08c515c" />
-<img width="719" height="500" alt="screenshot" src="https://github.com/user-attachments/assets/f5f1f97c-74c5-455a-9c3e-214f736b1115" />
-
+Synd is released under the [MIT License](LICENSE).
