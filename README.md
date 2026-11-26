@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/35438815/README.md)
 # Synd
 
 Synd is a small Windows desktop app for sending and retrieving files over SFTP. It has a simple graphical interface with your computer's files on one side and the server's files on the other, and an optional **Cloudflare Tunnel** connection mode for servers that sit behind Cloudflare Access.
