@@ -760,7 +760,7 @@ int run_frontend()
   title->labelcolor(fl_rgb_color(240, 242, 245));
   title->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-  Fl_Box *subtitle = new Fl_Box(34, 36, 300, 16, "\"Secure\" file transfer over SFTP");
+  Fl_Box *subtitle = new Fl_Box(34, 36, 300, 16, "Secure file transfer over SFTP");
   subtitle->labelfont(FL_HELVETICA);
   subtitle->labelsize(11);
   subtitle->labelcolor(fl_rgb_color(140, 148, 160));
