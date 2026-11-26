@@ -814,6 +814,7 @@ int run_frontend()
   ctx->local_tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS); // enables double-click callback
   ctx->local_tree->callback(local_tree_callback, ctx);
   ctx->local_tree->showroot(0);
+  ctx->local_tree->box(FL_FLAT_BOX);
 
   ctx->remote_files = create_modern_box(415, 160, 285, 150, "Remote Files");
   ctx->remote_tree = new Fl_Tree(420, 165, 250, 145);
@@ -824,6 +825,7 @@ int run_frontend()
   ctx->remote_tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS); // enables double-click callback
   ctx->remote_tree->callback(remote_tree_callback, ctx);
   ctx->remote_tree->showroot(0);
+  ctx->remote_tree->box(FL_FLAT_BOX);
 
   // Upload/retrieve buttons
   ctx->send = create_modern_button(50, 375, 90, 30, "Upload");
