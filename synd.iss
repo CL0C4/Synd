@@ -4,12 +4,12 @@
 [Setup]
 AppId={{02219AA2-4846-4916-A9EC-699148AD5B08}}
 AppName=Synd
-AppVersion=1.0
+AppVersion=2.0
 AppPublisher=Chris
 DefaultDirName={autopf}\Synd
 DefaultGroupName=Synd
 OutputDir=Output
-OutputBaseFilename=Synd-Setup-1.0
+OutputBaseFilename=Synd-Setup-2.0
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
