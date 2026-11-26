@@ -731,7 +731,7 @@ int run_frontend()
   // Set fallback window background color overrides globally
   Fl::background(30, 30, 36);
   // ----------------- theme end
-  Fl_Window *win = new Fl_Window(720, 480, "Synd 1.0");
+  Fl_Window *win = new Fl_Window(720, 480, "Synd 2.0");
   char exe[MAX_PATH];
   GetModuleFileNameA(NULL, exe, MAX_PATH);
   std::string base = std::filesystem::path(exe).parent_path().string();
